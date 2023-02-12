@@ -1,0 +1,39 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  display: grid;
+  place-items: center;
+  height: 100vh;
+}
+
+#gameboard {
+  background-color: black;
+  --side-length: clamp(100px, 10vw, 500px);
+
+  display: grid;
+  grid-template-columns: repeat(3, var(--side-length));
+  grid-template-rows: repeat(3, var(--side-length));
+  
+  gap: calc(var(--side-length) * 8 / 100);
+  font-size: calc(var(--side-length) * 50 / 100);
+}
+
+#gameboard > button {
+  border: none;
+  background-color: white;
+
+  color: black;
+  font-weight: bold;
+  font-size: inherit;
+
+  transition: all  150ms ease;
+}
+
+#gameboard > button:hover {
+  color: rgba(0, 0, 0, 0.6);
+}
+

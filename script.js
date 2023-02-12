@@ -12,7 +12,7 @@
     ];
 
     function convertCell(value) {
-      const newNode = doc.createElement('div');
+      const newNode = doc.createElement('button');
       htmlReference.appendChild(newNode);
       newNode.innerHTML = value;
     }
