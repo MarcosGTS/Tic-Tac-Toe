@@ -31,11 +31,19 @@
     function getBoard() {
       return [...gameBoard];
     }
+    
+    function getCrrPlayer() {
+      return players[crrPlayer];
+    }
+
+    function getPlayers() {
+      return [...players];
+    }
 
     function playRound(index) {
       // Checking if current cell is ocupied
       if (gameBoard[index]) return;
-      gameBoard[index] = players[crrPlayer].getSymbol();
+      gameBoard[index] = getCrrPlayer().getSymbol();
 
       // Updating the pointer to current player
       crrPlayer = (crrPlayer + 1) % players.length;
@@ -44,30 +52,73 @@
     return {
       getBoard,
       playRound,
+      getPlayers,
+      getCrrPlayer,
     }
   })();
 
   const screenController = (function (doc, gameController) {
-    const htmlReference = doc.querySelector("#gameboard");
+    const gameboardHtml = doc.querySelector("#gameboard");
+    const scoreboardHtml = doc.querySelector("#scoreboard");
 
+    initHtml();
     render();
 
-    function convertCell(value, index) {
-      
-    }
-
-    function render(indexToAnimate) {
+    function initHtml () {
       const gameBoard = gameController.getBoard();
-      htmlReference.innerHTML = '';
+      const players = gameController.getPlayers();
+      const crrPlayer = gameController.getCrrPlayer();
 
       gameBoard.forEach((value, index) => {
         const newNode = doc.createElement('button');
-        htmlReference.appendChild(newNode);
+        gameboardHtml.appendChild(newNode);
+        
         newNode.innerHTML = value;
         newNode.dataset.index = index;
-        if (index === indexToAnimate) 
-          newNode.dataset.animation = 'grow';
       });
+
+      players.forEach((player) => {
+        const playerHtml = doc.createElement('div');
+        scoreboardHtml.appendChild(playerHtml);
+        playerHtml.innerHTML = player.getName();
+
+        playerHtml.dataset.symbol = player.getSymbol();
+
+        if (player === crrPlayer) {
+          playerHtml.dataset.playing = 'true';
+        }
+      });
+
+    }
+
+    function updateBoard(indexToAnimate) {
+      const gameBoard = gameController.getBoard();
+      const htmlNodes = gameboardHtml.children;
+
+      gameBoard.forEach((value, index) => {
+        const node = htmlNodes[index];
+        node.innerHTML = value;
+        node.dataset.index = index;
+        
+        if (index === indexToAnimate) {
+          node.dataset.animation = 'grow';
+        }   
+      });
+    }
+
+    function updateScoreBoard() {
+      const crrPlayer = gameController.getCrrPlayer();
+      const htmlNodes = [...scoreboardHtml.children];
+      const playerSymbol = crrPlayer.getSymbol();
+
+      htmlNodes.forEach((node) => {
+        node.dataset.playing = node.dataset.symbol === playerSymbol;
+      });
+    }
+
+    function render(indexToAnimate) {
+      updateBoard(indexToAnimate);
+      updateScoreBoard();
     }
 
     function clickHandler(event) {
@@ -78,7 +129,7 @@
       render(index);
     }
 
-    htmlReference.addEventListener('click', clickHandler)
+    gameboardHtml.addEventListener('click', clickHandler)
 
   })(document, gameController);
 })();

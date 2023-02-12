@@ -44,3 +44,38 @@ body {
     font-size: inherit;
   }
 }
+
+#scoreboard {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  
+  height: 4rem;
+  margin: 2rem 0;
+}
+
+#scoreboard > div {
+  flex: 1; 
+  height: 100%;
+  padding: 1rem;
+
+  display: grid;
+  align-items: center;
+  transition: all 200ms;
+}
+
+#scoreboard > div:first-child {
+  text-align: end;
+  background-color: red;
+}
+
+#scoreboard > div:nth-child(2) {
+  text-align: start;
+  background-color: blue;
+}
+
+#scoreboard [data-playing="true"] {
+  flex: 2;
+  font-weight: bold;
+  font-size: 24px;
+}
