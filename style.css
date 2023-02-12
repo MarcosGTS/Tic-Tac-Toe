@@ -29,11 +29,18 @@ body {
   color: black;
   font-weight: bold;
   font-size: inherit;
-
-  transition: all  150ms ease;
 }
 
-#gameboard > button:hover {
-  color: rgba(0, 0, 0, 0.6);
+[data-animation="grow"] {
+  animation: grow 200ms forwards;
 }
 
+@keyframes grow {
+  from {
+    font-size: 0;
+  }
+  
+  to {
+    font-size: inherit;
+  }
+}
