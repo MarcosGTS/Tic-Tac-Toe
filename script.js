@@ -36,6 +36,12 @@
       return players[crrPlayer];
     }
 
+    function getPreviousPlayer() {
+      let previousIndex = crrPlayer - 1;
+      if (previousIndex < 0) previousIndex = players.length - 1;
+      return players[previousIndex];
+    }
+
     function getPlayers() {
       return [...players];
     }
@@ -49,11 +55,35 @@
       crrPlayer = (crrPlayer + 1) % players.length;
     }
 
+    function _compareCells(cell1, cell2, cell3) {
+      return cell1 !== '' && cell1 === cell2 && cell1 === cell3;
+    }
+
+    function getEndGame() {
+      // Check lines
+      for (let start of [0, 3, 6]) {
+        if (_compareCells(gameBoard[start], gameBoard[start + 1], gameBoard[start + 2]))
+          return true;
+      }
+      // Check columns
+      for (let start of [1, 2, 3]) {
+        if (_compareCells(gameBoard[start], gameBoard[start + 3], gameBoard[start + 6]))
+          return true;
+      }
+      // Check diagonals
+      if (_compareCells(gameBoard[0], gameBoard[4], gameBoard[8])) return true;
+      if (_compareCells(gameBoard[2], gameBoard[4], gameBoard[6])) return true;
+      
+      return false;
+    }
+
     return {
       getBoard,
       playRound,
       getPlayers,
       getCrrPlayer,
+      getEndGame,
+      getPreviousPlayer,
     }
   })();
 
@@ -122,11 +152,20 @@
     }
 
     function clickHandler(event) {
-      const index = Number(event.target.dataset.index);
-      if (isNaN(index)) return;
+      if (!gameController.getEndGame()) {
+        const index = Number(event.target.dataset.index);
+        if (!isNaN(index)) {
+          gameController.playRound(index);
+          render(index);
+        } 
+      } else {
+        renderWinner();
+      }
+    }
 
-      gameController.playRound(index);
-      render(index);
+    function renderWinner() {
+      const winner = gameController.getPreviousPlayer()
+      console.log(`Winner is ${winner.getName()}`);
     }
 
     gameboardHtml.addEventListener('click', clickHandler)

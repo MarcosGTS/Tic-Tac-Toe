@@ -21,7 +21,7 @@ body {
 
 main {
   width: fit-content;
-  margin:0 auto;
+  margin: 0 auto;
 }
 
 main h1 {
@@ -44,7 +44,11 @@ footer a {
   text-decoration: none;
 }
 
+
+
 #gameboard {
+  position: relative;
+
   background-color: var(--dark-color);
   --side-length: clamp(100px, 8vw, 400px);
 
@@ -57,7 +61,22 @@ footer a {
   font-size: calc(var(--side-length) * 50 / 100);
 }
 
+.stroke {
+  position: absolute;
+  background-color: blue;
+
+  top: 50%;
+  left: 50%;
+
+  transform: translate(-50%, -50%);
+
+  width: clamp(360px, 28vw, 700px);
+  height: .5rem;
+  z-index: 1;
+}
+
 #gameboard > button {
+  position: relative;
   border: none;
   background-color: var(--light-color);
 
