@@ -60,21 +60,46 @@
     }
 
     function getEndGame() {
+      /*
+        {
+          middle: index;
+          rotation: [0-3]
+        }
+      */
       // Check lines
       for (let start of [0, 3, 6]) {
-        if (_compareCells(gameBoard[start], gameBoard[start + 1], gameBoard[start + 2]))
-          return true;
+        if (_compareCells(gameBoard[start], gameBoard[start + 1], gameBoard[start + 2])){
+          return {
+            center: start + 1,
+            rotation: -180,
+          };
+        }  
       }
       // Check columns
-      for (let start of [1, 2, 3]) {
-        if (_compareCells(gameBoard[start], gameBoard[start + 3], gameBoard[start + 6]))
-          return true;
+      for (let start of [0, 1, 2]) {
+        if (_compareCells(gameBoard[start], gameBoard[start + 3], gameBoard[start + 6])) {
+          return {
+            center: start + 3,
+            rotation: -90,
+          };
+        } 
       }
       // Check diagonals
-      if (_compareCells(gameBoard[0], gameBoard[4], gameBoard[8])) return true;
-      if (_compareCells(gameBoard[2], gameBoard[4], gameBoard[6])) return true;
+      if (_compareCells(gameBoard[0], gameBoard[4], gameBoard[8])){
+        return {
+          center: 4,
+          rotation: -135,
+        }
+      }
+
+      if (_compareCells(gameBoard[2], gameBoard[4], gameBoard[6])) {
+        return {
+          center: 4,
+          rotation: -45,
+        }
+      }
       
-      return false;
+      return null;
     }
 
     return {
@@ -165,7 +190,20 @@
 
     function renderWinner() {
       const winner = gameController.getPreviousPlayer()
-      console.log(`Winner is ${winner.getName()}`);
+      
+      drawStroke();
+    }
+
+    function drawStroke() {
+      const {center, rotation} = gameController.getEndGame();
+      const node = gameboardHtml.children[center];
+
+      // Position stroke
+      const stroke = doc.createElement('span');
+      node.appendChild(stroke);
+
+      stroke.classList.add('stroke');
+      stroke.style = `rotate: ${rotation}deg`
     }
 
     gameboardHtml.addEventListener('click', clickHandler)
