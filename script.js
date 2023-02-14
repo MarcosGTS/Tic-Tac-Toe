@@ -26,6 +26,7 @@
       '', '', '',
     ];
 
+    let gameOver = false;
     let crrPlayer = 0;
 
     function getBoard() {
@@ -46,13 +47,19 @@
       return [...players];
     }
 
+    function isGameOver() {
+      return gameOver;
+    }
+
     function playRound(index) {
-      // Checking if current cell is ocupied
-      if (gameBoard[index]) return;
+      // Validating play
+      if (gameOver || gameBoard[index]) return;
       gameBoard[index] = getCrrPlayer().getSymbol();
 
       // Updating the pointer to current player
       crrPlayer = (crrPlayer + 1) % players.length;
+
+      if (getEndGame()) gameOver = true;
     }
 
     function _compareCells(cell1, cell2, cell3) {
@@ -60,12 +67,7 @@
     }
 
     function getEndGame() {
-      /*
-        {
-          middle: index;
-          rotation: [0-3]
-        }
-      */
+
       // Check lines
       for (let start of [0, 3, 6]) {
         if (_compareCells(gameBoard[start], gameBoard[start + 1], gameBoard[start + 2])){
@@ -109,6 +111,7 @@
       getCrrPlayer,
       getEndGame,
       getPreviousPlayer,
+      isGameOver,
     }
   })();
 
@@ -177,15 +180,16 @@
     }
 
     function clickHandler(event) {
-      if (!gameController.getEndGame()) {
-        const index = Number(event.target.dataset.index);
-        if (!isNaN(index)) {
-          gameController.playRound(index);
-          render(index);
-        } 
-      } else {
-        renderWinner();
-      }
+      if (gameController.isGameOver()) return;
+
+      const index = Number(event.target.dataset.index);
+      
+      if (!isNaN(index)) {
+        gameController.playRound(index);
+        render(index);
+      } 
+
+      if (gameController.isGameOver()) renderWinner();
     }
 
     function renderWinner() {
