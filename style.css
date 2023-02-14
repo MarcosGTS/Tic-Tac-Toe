@@ -156,3 +156,17 @@ footer a {
   background-color: var(--dark-color);
   color: var(--light-color);
 }
+
+#scoreboard .loser {
+  display: none;
+}
+
+#scoreboard .winner {
+  color: yellow;
+}
+
+#scoreboard .tie {
+  flex: 1;
+  color: blue;
+}
+

@@ -37,6 +37,10 @@
       return players[crrPlayer];
     }
 
+    function getGameover() {
+      return gameOver;
+    }
+
     function getPreviousPlayer() {
       let previousIndex = crrPlayer - 1;
       if (previousIndex < 0) previousIndex = players.length - 1;
@@ -47,19 +51,22 @@
       return [...players];
     }
 
-    function isGameOver() {
-      return gameOver;
+    function _updateGameState() {
+      const fullBoard = gameBoard.reduce((prev, val) => prev && val);
+      const hasWinner = getEndGame();
+      gameOver = (hasWinner || fullBoard);
+    }
+
+    function _changePlayer() {
+      crrPlayer = (crrPlayer + 1) % players.length;
     }
 
     function playRound(index) {
       // Validating play
       if (gameOver || gameBoard[index]) return;
       gameBoard[index] = getCrrPlayer().getSymbol();
-
-      // Updating the pointer to current player
-      crrPlayer = (crrPlayer + 1) % players.length;
-
-      if (getEndGame()) gameOver = true;
+      _changePlayer();
+      _updateGameState();
     }
 
     function _compareCells(cell1, cell2, cell3) {
@@ -67,6 +74,24 @@
     }
 
     function getEndGame() {
+      if (checkWinCondition()) {
+        return {
+          hasWinner: true,
+          winner: getPreviousPlayer(),
+        }
+      } 
+      
+      if (gameOver) {
+        return {
+          hasWinner: false,
+          winner: null,
+        };
+      }
+
+      return null;
+    }
+
+    function checkWinCondition() {
 
       // Check lines
       for (let start of [0, 3, 6]) {
@@ -111,7 +136,8 @@
       getCrrPlayer,
       getEndGame,
       getPreviousPlayer,
-      isGameOver,
+      getGameover,
+      checkWinCondition,
     }
   })();
 
@@ -177,29 +203,40 @@
     function render(indexToAnimate) {
       updateBoard(indexToAnimate);
       updateScoreBoard();
+      if (gameController.getGameover()) renderWinner();
     }
 
     function clickHandler(event) {
-      if (gameController.isGameOver()) return;
-
       const index = Number(event.target.dataset.index);
       
-      if (!isNaN(index)) {
-        gameController.playRound(index);
-        render(index);
-      } 
-
-      if (gameController.isGameOver()) renderWinner();
+      if (isNaN(index)) return;
+      if (gameController.getGameover()) return;
+      
+      gameController.playRound(index);
+      render(index);
     }
 
     function renderWinner() {
-      const winner = gameController.getPreviousPlayer()
-      
-      drawStroke();
+      const {hasWinner, winner} = gameController.getEndGame();
+      const nodes = [...scoreboardHtml.children];
+
+      if (hasWinner) {
+        drawStroke();
+      } 
+
+      nodes.forEach((node) => {
+        if (!hasWinner) {
+          node.classList.add('tie');
+        } else if (node.dataset.symbol === winner.getSymbol()) {
+          node.classList.add('winner');
+        } else {
+          node.classList.add('loser');
+        }
+      })
     }
 
     function drawStroke() {
-      const {center, rotation} = gameController.getEndGame();
+      const {center, rotation} = gameController.checkWinCondition();
       const node = gameboardHtml.children[center];
 
       // Position stroke
