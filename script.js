@@ -144,6 +144,9 @@
   const screenController = (function (doc, gameController) {
     const gameboardHtml = doc.querySelector("#gameboard");
     const scoreboardHtml = doc.querySelector("#scoreboard");
+    const configHtml = doc.querySelector('.config');
+    const configBtn = doc.querySelector("#config-btn");
+    const playBtn = doc.querySelector('#play-btn');
 
     initHtml();
     render();
@@ -247,7 +250,17 @@
       stroke.style = `rotate: ${rotation}deg`
     }
 
-    gameboardHtml.addEventListener('click', clickHandler)
+    function restartGame() {
+      console.log('restart');
+    }
+
+    function showConfig() {
+      configHtml.classList.toggle("show");
+    }
+
+    gameboardHtml.addEventListener('click', clickHandler);
+    playBtn.addEventListener('click', restartGame);
+    configBtn.addEventListener('click', showConfig);
 
   })(document, gameController);
 })();
