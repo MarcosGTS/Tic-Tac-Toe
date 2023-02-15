@@ -80,6 +80,7 @@ footer a {
 }
 
 .config {
+  transform-origin: center top;
   transform: scaleY(0);
   transition: all 200ms ease;
 }

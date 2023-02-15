@@ -14,10 +14,10 @@
     }
   }
 
-  const gameController = (function () {
+function gameFactory (player1, player2) {
     const players = [
-      playerFactory('Marcos', 'X'),
-      playerFactory('Juvenal', 'O'),
+      playerFactory(player1, 'X'),
+      playerFactory(player2, 'O'),
     ];
 
     const gameBoard = [
@@ -41,14 +41,14 @@
       return gameOver;
     }
 
+    function getPlayers() {
+      return [...players];
+    }
+
     function getPreviousPlayer() {
       let previousIndex = crrPlayer - 1;
       if (previousIndex < 0) previousIndex = players.length - 1;
       return players[previousIndex];
-    }
-
-    function getPlayers() {
-      return [...players];
     }
 
     function _updateGameState() {
@@ -92,7 +92,6 @@
     }
 
     function checkWinCondition() {
-
       // Check lines
       for (let start of [0, 3, 6]) {
         if (_compareCells(gameBoard[start], gameBoard[start + 1], gameBoard[start + 2])){
@@ -139,14 +138,16 @@
       getGameover,
       checkWinCondition,
     }
-  })();
+  };
 
-  const screenController = (function (doc, gameController) {
+  const screenController = (function (doc) {
     const gameboardHtml = doc.querySelector("#gameboard");
     const scoreboardHtml = doc.querySelector("#scoreboard");
     const configHtml = doc.querySelector('.config');
     const configBtn = doc.querySelector("#config-btn");
     const playBtn = doc.querySelector('#play-btn');
+
+    let gameController = gameFactory('X', 'O');
 
     initHtml();
     render();
@@ -156,6 +157,7 @@
       const players = gameController.getPlayers();
       const crrPlayer = gameController.getCrrPlayer();
 
+      gameboardHtml.innerHTML = '';
       gameBoard.forEach((value, index) => {
         const newNode = doc.createElement('button');
         gameboardHtml.appendChild(newNode);
@@ -164,6 +166,7 @@
         newNode.dataset.index = index;
       });
 
+      scoreboardHtml.innerHTML = '';
       players.forEach((player) => {
         const playerHtml = doc.createElement('div');
         scoreboardHtml.appendChild(playerHtml);
@@ -175,7 +178,6 @@
           playerHtml.dataset.playing = 'true';
         }
       });
-
     }
 
     function updateBoard(indexToAnimate) {
@@ -251,7 +253,14 @@
     }
 
     function restartGame() {
-      console.log('restart');
+      const player1 = configHtml.children[0].value || 'X';
+      const player2 = configHtml.children[1].value || 'O';
+
+      gameController = gameFactory(player1, player2);
+      initHtml();
+
+      configHtml.children[0].value = '';
+      configHtml.children[1].value = '';
     }
 
     function showConfig() {
@@ -262,5 +271,5 @@
     playBtn.addEventListener('click', restartGame);
     configBtn.addEventListener('click', showConfig);
 
-  })(document, gameController);
+  })(document);
 })();
