@@ -27,7 +27,7 @@ function gameFactory (player1, player2) {
     ];
 
     let gameOver = false;
-    let crrPlayer = 0;
+    let crrPlayer = Math.floor(Math.random() * players.length);
 
     function getBoard() {
       return [...gameBoard];
